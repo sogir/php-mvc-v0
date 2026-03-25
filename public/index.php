@@ -7,17 +7,21 @@ use App\RouteNotFoundException;
 
 $router = new Router();
 
-$router->register('/', function() {
-    return "Homepage!";
-})
-->register('/about', function() {
-    return "About Page!";
-});
-
+$router->register(
+     '/', 
+     function() {
+          return "Homepage!";
+     }
+)->register(
+     '/about', 
+     function() {
+          return "About Page!";
+     }
+);
 
 try {
     echo $router->resolve($_SERVER['REQUEST_URI']);
 } catch (RouteNotFoundException $e) {    
-    echo "BEEP BOOP! ALARM! That ride does not exist!";
+    echo $e->getMessage();
 }
 
