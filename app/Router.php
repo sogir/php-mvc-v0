@@ -1,11 +1,6 @@
 <?php
 
-namespace App;
-
-class RouteNotFoundException extends \Exception 
-{
-     protected $message = '404 not found';
-}
+namespace App\Routes;
 
 class Router
 {
@@ -13,7 +8,7 @@ class Router
 
      public function register(
           string $route,
-          callable $action
+          callable|array $action
      ): self {
           $this->routes[$route] = $action;
           return $this;
@@ -28,7 +23,25 @@ class Router
                throw new RouteNotFoundException();
           }
 
-          return $action();
-     }
+          if (is_callable($action)) {
+               return $action();
+          }
+
+          if (is_array($action)) {
+               [$class, $method] = $action;
+
+               if (!class_exists($class)) {
+                    throw new RouteNotFoundException();
+               }
+
+               $controller = new $class();
+
+               if (!is_callable([$controller, $method])) {
+                    throw new RouteNotFoundException();
+               }
+               
+               return (new $class)->$method();
+          }
      
+     }
 }
