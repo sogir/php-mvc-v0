@@ -2,26 +2,18 @@
 
 <?php
 require __DIR__ . '/../vendor/autoload.php';
-use App\Router;
-use App\RouteNotFoundException;
+use App\Routes;
+use App\Controllers;
 
-$router = new Router();
+$router = new Routes\Router();
 
-$router->register(
-     '/', 
-     function() {
-          return "Homepage!";
-     }
-)->register(
-     '/about', 
-     function() {
-          return "About Page!";
-     }
-);
+$router->register('/', [Controllers\HomeController::class, 'index'])
+     ->register('/about', [Controllers\AboutController::class, 'index'])
+     ->register('/about/contact', [Controllers\AboutController::class, 'contact']);
 
 try {
     echo $router->resolve($_SERVER['REQUEST_URI']);
-} catch (RouteNotFoundException $e) {    
+} catch (Routes\RouteNotFoundException $e) {    
     echo $e->getMessage();
 }
 
